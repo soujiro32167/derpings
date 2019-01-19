@@ -1,0 +1,14 @@
+{
+  "name": "algos",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Eli K",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^22.2.2"
+  }
+}
