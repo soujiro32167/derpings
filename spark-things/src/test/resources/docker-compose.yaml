@@ -1,0 +1,30 @@
+version: '3'
+services:
+  spark-master:
+    image: spark:2.3.2
+    ports:
+      - "8080:8080"
+      - "6066:6066"
+      - "7077:7077"
+    hostname: spark-master
+    environment:
+      SPARK_PUBLIC_DNS: localhost
+#    entrypoint: ["bash", "-c", "../sbin/start-master.sh"]
+    entrypoint: ["../bin/spark-class", "org.apache.spark.deploy.master.Master"]
+    volumes:
+      - ~/dev/derpings/spark-things/target:/app
+
+  spark-worker:
+    image: spark:2.3.2
+    hostname: spark-worker
+    ports:
+      - "4040:4040"
+      - "8081:8081"
+    environment:
+      SPARK_PUBLIC_DNS: localhost
+#    entrypoint: ["../sbin/start-slave.sh", "spark://spark-master:7077"]
+    depends_on:
+      - spark-master
+    entrypoint: ["../bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
+    volumes:
+      - ~/dev/derpings/spark-things/target:/app
