@@ -32,14 +32,4 @@ class SparkLauncherTest extends FlatSpec with Matchers {
        })
 
     Thread.sleep(10000)
-
-//    val br: BufferedReader = new BufferedReader(new InputStreamReader(System.in))
-//    var line = br.readLine()
-//
-//    while (line != null){
-//      println(line)
-//      line = br.readLine()
-//      Thread.sleep(100)
-//    }
-  }
 }
