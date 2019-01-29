@@ -33,6 +33,14 @@ object WebServer extends AkkaTrait {
         get {
           complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, "W00t"))
         }
+      } ~
+      path("spark") {
+        post {
+          entity(as[String]) { string =>
+            println(s"spark post: $string");
+            complete(HttpEntity(ContentTypes.`text/plain(UTF-8)`, s"spark post: $string"))
+          }
+        }
       }
 
     val bindingFuture = Http().bindAndHandle(route, host, port)

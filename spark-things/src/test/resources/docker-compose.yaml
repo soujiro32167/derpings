@@ -12,7 +12,7 @@ services:
 #    entrypoint: ["bash", "-c", "../sbin/start-master.sh"]
     entrypoint: ["../bin/spark-class", "org.apache.spark.deploy.master.Master"]
     volumes:
-      - ~/dev/derpings/spark-things/target:/app
+      - /Users/eli/dev/derpings/spark-things/target:/app
 
   spark-worker:
     image: spark:2.3.2
@@ -27,4 +27,4 @@ services:
       - spark-master
     entrypoint: ["../bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
     volumes:
-      - ~/dev/derpings/spark-things/target:/app
+      - /Users/eli/dev/derpings/spark-things/target:/app
