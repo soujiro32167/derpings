@@ -1,7 +1,7 @@
 version: '3'
 services:
   spark-master:
-    image: spark:2.3.2
+    image: soujiro32167/spark:2.3.2
     ports:
       - "8080:8080"
       - "6066:6066"
@@ -15,7 +15,7 @@ services:
       - /Users/eli/dev/derpings/spark-things/target:/app
 
   spark-worker:
-    image: spark:2.3.2
+    image: soujiro32167/spark:2.3.2
     hostname: spark-worker
     ports:
       - "4040:4040"
@@ -28,3 +28,10 @@ services:
     entrypoint: ["../bin/spark-class", "org.apache.spark.deploy.worker.Worker", "spark://spark-master:7077"]
     volumes:
       - /Users/eli/dev/derpings/spark-things/target:/app
+
+
+  gremlin-server:
+    image: tinkerpop/gremlin-server:3.4.0
+    ports:
+      - "8182:8182"
+    command: ["conf/gremlin-server-modern.yaml"]

@@ -67,6 +67,24 @@
       <version>2.5.19</version> <!-- Or whatever the latest version is -->
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>spark-gremlin</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.michaelpollmeier</groupId>
+      <artifactId>gremlin-scala_${scala.tools.version}</artifactId>
+      <version>3.3.3.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tinkerpop</groupId>
+      <artifactId>gremlin-driver</artifactId>
+      <version>3.4.0</version>
+    </dependency>
+
     <!-- Misc -->
     <dependency>
       <groupId>com.softwaremill.sttp</groupId>
@@ -140,6 +158,24 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <includeArtifactIds>spark-gremlin,gremlin-core,hadoop-gremlin,gremlin-shaded</includeArtifactIds>
+        </configuration>
       </plugin>
 
       <plugin>

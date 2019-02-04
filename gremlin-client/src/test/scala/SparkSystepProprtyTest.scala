@@ -67,5 +67,6 @@ class SparkSystepProprtyTest extends FlatSpec with Matchers {
   "Spark system property parser" should "do quotes right" in {
     SparkMock.splitCommandString("a 'b\" c' \"d' e\"") shouldEqual Seq("a", "b\" c", "d' e")
     SparkMock.splitCommandString("-DsomeProp=g.V().hasLabel(\"'enodeb'\")") shouldEqual Seq("-DsomeProp=g.V().hasLabel('enodeb')")
+    SparkMock.splitCommandString("-DsomeProp=\"g.V().hasLabel('enodeb').has('thing', 'thing')\"") shouldEqual Seq("-DsomeProp=g.V().hasLabel('enodeb').has('thing', 'thing')")
   }
 }
