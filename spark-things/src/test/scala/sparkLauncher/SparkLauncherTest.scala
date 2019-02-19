@@ -41,7 +41,7 @@ class SparkLauncherTest extends FlatSpec with Matchers {
       .setAppResource("/app/app.jar")
       .setMainClass("ca.eli.GremlinApp")
       .setDeployMode("cluster")
-      .setMaster("spark://localhost:6066")
+      .setMaster("spark://localhost:7077")
       .startApplication(new SparkAppHandle.Listener {
       override def stateChanged(handle: SparkAppHandle): Unit = {
         println("state changed")

@@ -19,7 +19,7 @@
     <encoding>UTF-8</encoding>
     <scala.tools.version>2.11</scala.tools.version>
     <scala.version>2.11.8</scala.version>
-    <spark.version>2.3.2</spark.version>
+    <spark.version>2.4.0</spark.version>
     <akka.http.version>10.1.7</akka.http.version>
   </properties>
 
