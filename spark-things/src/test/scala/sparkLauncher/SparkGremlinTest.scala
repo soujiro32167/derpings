@@ -4,6 +4,7 @@ import java.io.File
 
 import gremlin.scala._
 import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.SparkSession
 import org.apache.tinkerpop.gremlin.driver.Client.ClusteredClient
 import org.apache.tinkerpop.gremlin.driver.Cluster
@@ -17,6 +18,7 @@ import org.apache.tinkerpop.gremlin.spark.process.computer.SparkGraphComputer
 import org.apache.tinkerpop.gremlin.structure.util.GraphFactory
 import org.scalatest.{FlatSpec, Matchers}
 import org.apache.tinkerpop.gremlin.process.traversal.AnonymousTraversalSource._
+import org.apache.tinkerpop.gremlin.process.traversal.traverser.util.TraverserSet
 import org.apache.tinkerpop.gremlin.spark.structure.Spark
 import org.apache.tinkerpop.gremlin.spark.structure.io.PersistedInputRDD
 import org.apache.tinkerpop.gremlin.structure.Direction
@@ -47,7 +49,7 @@ class SparkGremlinTest extends FlatSpec with Matchers {
     //Spark.close()
   }
 
-  ignore should "run a traversal vertex program" in {
+  it should "run a traversal vertex program" in {
 
     val graph: Graph = GraphFactory.open("src/test/resources/hadoop-gryo.properties")
     val g: GraphTraversalSource = graph.traversal().withComputer(classOf[SparkGraphComputer])
@@ -58,30 +60,41 @@ class SparkGremlinTest extends FlatSpec with Matchers {
       .program(TraversalVertexProgram.build.traversal(
         graph.traversal.withComputer(classOf[SparkGraphComputer]),
         "gremlin-groovy",
-        "g.V()").create(graph)).submit.get
+        "g.V().has('name', 'josh')").create(graph)).submit.get
+
+    val traverserSet: TraverserSet[Vertex] = result.memory().get[TraverserSet[Vertex]](TraversalVertexProgram.HALTED_TRAVERSERS)
+
+    traverserSet should have size 1
+
+    val filteredIds: Set[AnyRef] = traverserSet.asScala.map(_.get().id()).toSet
 
     // convert output location to RDD name
     val rddName = Constants.getGraphLocation(graph.configuration().getString(Constants.GREMLIN_HADOOP_OUTPUT_LOCATION))
 
-    val rdd = Spark.getRDD(rddName)
+    val rdd = Spark.getRDD(rddName).asInstanceOf[RDD[(Int, VertexWritable)]]
 
     val rdds = Spark.getRDDs
 
     rdds should have size 1
     rdds should contain only rdd
 
+    rdd foreach {
+      case (id, writable) =>
+        println(writable.get().valueMap("id", "name", "age"))
+        println(writable.get().edges(Direction.BOTH).asScala.toList)
+    }
 
-    //rdds foreach { rdd =>
-      rdd foreach {
-        case (id, writable: VertexWritable) =>
-          println(writable.get().valueMap("id", "name", "age"))
-          println(writable.get().edges(Direction.BOTH).asScala.toList)
-      }
-    //}
+    val filteredRdd = rdd.filter{
+      case (_, writable) => filteredIds.contains(writable.get().id())
+    }
 
-    rdd.collect() should have size 6
+    filteredRdd.count shouldBe 1
 
-    //Spark.close()
+    filteredRdd.collect().head match {
+      case (id, writable) => writable.get().property[String]("name").value() shouldBe "josh"
+    }
+
+    rdd.count shouldBe 6
   }
 
   ignore should "use remote data and spark" in {
